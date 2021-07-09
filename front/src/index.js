@@ -35,7 +35,7 @@ const App = observer(class extends React.Component {
       isWaitingForPlayer: observable,
       gameId: observable
     })
-    const HOST = location.origin.replace(/^http/, 'ws')
+    const HOST = window.location.origin.replace(/^http/, 'ws')
     const socket = new WebSocket(HOST);
     this.socket = socket;
 
