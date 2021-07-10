@@ -31,6 +31,10 @@ wss.on('connection', connection => {
         break;
     }
   });
+  connection.on('close', () => {
+    const gamesOfPlayer = Object.values(games).filter(game => game.players.some(players => players.id === connection.id));
+    gamesOfPlayer.forEach(game => finishGame(game, 'error'))
+  })
 });
 
 function initConnection(connection) {
@@ -113,10 +117,6 @@ function finishGame(game, result) {
   delete games[game.id];
   broadcastGames();
 }
-
-wss.on('close', message => {
-  console.log('close', message)
-})
 
 
 

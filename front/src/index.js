@@ -73,7 +73,11 @@ const App = observer(class extends React.Component {
           break;
         case 'finishedGame':
           this.isGameOn = false;
-          alert(`Игра окончена, ${message.data.result === 'draw' ? 'ничья' : message.data.result + ' выграл'}`);
+          alert(`Игра окончена, ${
+            message.data.result === 'draw' ? 'ничья' :
+              message.data.result === 'error' ? 'Ваш соперник вышел' :
+                message.data.result + ' выграл'}`
+          );
       }
     }
 
@@ -99,41 +103,41 @@ const App = observer(class extends React.Component {
   render() {
     console.log('gameList', this.gameList)
     return (
-        <div className="wrapper">
-          <div className="game-info">
-            <div>Ваш id: {this.id}</div>
-            <div>{this.isConnected ? 'Соединение с сервером установлено' : 'Соединение с сервером потеряно'}</div>
-            <button className="button"
-                    disabled={this.isGameOn || this.isWaitingForPlayer}
-                    onClick={this.createGame}
-            >Создать игру
-            </button>
-            {this.isWaitingForPlayer && <div>Вы находитесь в лобби номер<br/>{this.gameId}</div>}
-          </div>
-          <div className="game-list">
-            {this.gameList?.map((game, i) => <div key={game.id} className="game-from-list">
-              <div>id:{game.id}</div>
-              <div>{game.players?.length}/2</div>
-              <button onClick={() => this.joinGame(game.id)}
-                      disabled={game.players?.some(p => p.id === this.id) || game.players?.length === 2}
-              >Войти в игру
-              </button>
-              {(this.gameList.length - 1) !== i && <hr className="mx-1"/>}
-            </div>)}
-          </div>
-          {this.isGameOn && (
-            <div className="w-100">
-              <div className="w-100">Вы играете за {this.role}</div>
-              {
-                this.field?.map((row, y) => (
-                  <div className="row" key={y}>
-                    {row.map((cell, x) => <div className="cell" key={x + '' + y}
-                                               onClick={() => this.turn(x, y)}>{cell}</div>)}
-                  </div>
-                ))}
-            </div>
-          )}
+      <div className="wrapper">
+        <div className="game-info">
+          <div>Ваш id: {this.id}</div>
+          <div>{this.isConnected ? 'Соединение с сервером установлено' : 'Соединение с сервером потеряно'}</div>
+          <button className="button"
+                  disabled={this.isGameOn || this.isWaitingForPlayer}
+                  onClick={this.createGame}
+          >Создать игру
+          </button>
         </div>
+        <div className="game-list">
+          <div>Список лобби:</div>
+          {this.gameList?.slice()?.reverse()?.map((game, i) => <div key={game.id} className="game-from-list">
+            <div>id:{game.id}</div>
+            <div>{game.players?.length}/2</div>
+            <button onClick={() => this.joinGame(game.id)}
+                    disabled={game.players?.some(p => p.id === this.id) || game.players?.length === 2}
+            >Войти в игру
+            </button>
+            {(this.gameList.length - 1) !== i && <hr className="mx-1"/>}
+          </div>)}
+        </div>
+        {this.isGameOn && (
+          <div className="w-100">
+            <div className="w-100">Вы играете за {this.role}</div>
+            {
+              this.field?.map((row, y) => (
+                <div className="row" key={y}>
+                  {row.map((cell, x) => <div className="cell" key={x + '' + y}
+                                             onClick={() => this.turn(x, y)}>{cell}</div>)}
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
     )
   }
 });
