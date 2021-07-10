@@ -1,14 +1,75 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
+:root {
+    --color-primary: #7D8CC4;
+    --color-secondary: #594157;
+    --color-light: #BEE7E8;
+    font-size: max(2vw, 16px);
+    background-color: var(--color-light);
+}
+
+body {
+    background-color: unset;
+    overflow-x: hidden;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
 .row {
     display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-left: 50%;
+    transform: translate(-50%);
 }
 
 .cell {
     text-align: center;
-    line-height: 100px;
     font-size: 2rem;
-    width: 100px;
-    height: 100px;
     border: 1px solid #000;
+    width: 33vw;
+    height: 33vw;
+    line-height: 33vw;
+}
+
+.game-info {
+    background-color: var(--color-primary);
+    padding: 5px 15px 30px 15px;
+    height: min-content;
+    width: 100%;
+    border-bottom-right-radius: 0;
+}
+
+.game-list {
+    overflow-y: scroll;
+    background-color: var(--color-light);
+    height: 40vh;
+    padding-bottom: 5px;
+    border-bottom: 0.1px solid var(--color-secondary);
+}
+
+.button {
+    background-color: var(--color-secondary);
+    color: var(--color-light);
+    display: block;
+    cursor: pointer;
+    width: 100%;
+    height: max(calc(2vw * 2), 30px);
+    border: none;
+}
+
+.button[disabled] {
+    filter: brightness(0.6);
+}
+
+@media screen and (min-width: 1200px) {
+    .cell {
+        width: 200px;
+        height: 200px;
+        line-height: 200px;
+    }
 }
