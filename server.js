@@ -17,6 +17,7 @@ const games = {};
 
 wss.on('connection', connection => {
   initConnection(connection);
+  broadcastOnline();
   connection.on('message', message => {
     message = JSON.parse(message);
     switch (message.event) {
@@ -33,7 +34,8 @@ wss.on('connection', connection => {
   });
   connection.on('close', () => {
     const gamesOfPlayer = Object.values(games).filter(game => game.players.some(players => players.id === connection.id));
-    gamesOfPlayer.forEach(game => finishGame(game, 'error'))
+    gamesOfPlayer.forEach(game => finishGame(game, 'error'));
+    broadcastOnline();
   })
 });
 
@@ -74,7 +76,7 @@ function gameTurn(connection, message) {
   const x = message.data.x, y = message.data.y, role = message.data.role;
   const gameId = message.data.gameId;
   const game = games[gameId]
-  if (role === games[gameId].turn) {
+  if (role === game.turn && game.field[y][x] === ' ') {
     game.field[y][x] = role;
     game.players.forEach(p => broadcastField(p.connection, game.field));
     game.turn = game.turn === 'x' ? 'o' : 'x';
@@ -100,6 +102,10 @@ function broadcastGames(connection) {
   }
 }
 
+function broadcastOnline() {
+  wss.clients.forEach(connection => connection.send(JSON.stringify({event: 'online', data: {online: wss.clients.size}})))
+}
+
 function joinGame(connection, message) {
   const gameId = message?.data?.gameId;
   const game = games[gameId];
@@ -117,6 +123,5 @@ function finishGame(game, result) {
   delete games[game.id];
   broadcastGames();
 }
-
 
 

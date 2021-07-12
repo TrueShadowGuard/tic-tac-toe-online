@@ -18,6 +18,7 @@ const App = observer(class extends React.Component {
   isGameOn = false;
   isWaitingForPlayer = false;
   isMyTurn = undefined;
+  online = 0;
 
   gameId = undefined;
   socket = undefined;
@@ -33,7 +34,8 @@ const App = observer(class extends React.Component {
       role: observable,
       isMyTurn: observable,
       isWaitingForPlayer: observable,
-      gameId: observable
+      gameId: observable,
+      online: observable
     });
     this.connectToServer();
   }
@@ -57,6 +59,9 @@ const App = observer(class extends React.Component {
       switch (message.event) {
         case 'init':
           this.id = message.data.id;
+          break;
+        case 'online':
+          this.online = message.data.online;
           break;
         case 'field':
           this.field = message.data.field;
@@ -123,7 +128,11 @@ const App = observer(class extends React.Component {
       <div className="wrapper">
         <div className="game-info">
           <div>Ваш id: {this.id}</div>
-          <div>{this.isConnected ? 'Соединение с сервером установлено' : 'Соединение с сервером потеряно'}</div>
+          <div>
+            {this.isConnected ? 'Соединение с сервером установлено' : 'Соединение с сервером потеряно'} <br/>
+            {'Текущий онлайн: ' + this.online} <br/>
+            {this.gameId ? `Вы находитесь в лобби ${this.gameId}` : 'Вы не находитесь в лобби'}
+          </div>
           <button className="button"
                   disabled={this.isGameOn || this.isWaitingForPlayer}
                   onClick={this.createGame}
